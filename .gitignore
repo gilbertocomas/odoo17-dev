@@ -1,0 +1,8 @@
+# Ignorar datos persistentes
+/postgresql-data
+/odoo-data
+/logs
+
+# Ignorar archivos de entorno
+.env
+*.bak

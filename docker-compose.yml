@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - ./postgresql-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - odoo-network
+
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      - postgres
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+    volumes:
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - ./extra-addons:/mnt/extra-addons
+      - ./odoo-data:/var/lib/odoo  # Este volumen contendrá todo
+      - ./logs:/var/log/odoo
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    user: "${UID:-1000}:${GID:-1000}"  # Usa tu usuario local
+    restart: unless-stopped
+    networks:
+      - odoo-network
+
+networks:
+  odoo-network:
+    driver: bridge
